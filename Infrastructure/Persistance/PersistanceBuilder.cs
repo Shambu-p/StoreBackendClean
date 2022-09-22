@@ -17,7 +17,7 @@ namespace StoreBackendClean.Infrastructure.Persistance
             builder = StoreConfiguration.onBuild(builder);
             builder = StoreItemConfiguration.onBuild(builder);
             builder = ItemConfiguration.onBuild(builder);
-            builder = UserConfiguration.onBuild(builder);
+            // builder = UserConfiguration.onBuild(builder);
 
             return builder;
 
