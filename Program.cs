@@ -74,6 +74,11 @@ builder.Services.AddCors(option => option.AddPolicy(name: cors_name, policy => {
 
 builder.Services.AddMediatR(typeof(Program));
 
+var cors_name = "app_cors";
+builder.Services.AddCors(option => option.AddPolicy(name: cors_name, policy => {
+    policy.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
+}));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -83,8 +88,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseCors(cors_name);
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

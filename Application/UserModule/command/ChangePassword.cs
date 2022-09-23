@@ -12,10 +12,10 @@ namespace StoreBackendClean.Application.UserModule.command
 {
     public class ChangePassword : IRequest<User> {
         
-        uint Id {get; init;}
-        string current_password {get; init;}
-        string new_password {get; init;}
-        string confirm_password {get; init;}
+        public uint Id {get; init;}
+        public string current_password {get; init;}
+        public string new_password {get; init;}
+        public string confirm_password {get; init;}
 
         public ChangePassword(uint id, string current, string newer, string confirm){
             this.Id = id;
@@ -26,11 +26,11 @@ namespace StoreBackendClean.Application.UserModule.command
 
     }
 
-    public class GetUserQueryHandler : IRequestHandler<ChangePassword, User> {
+    public class ChangePasswordHandler : IRequestHandler<ChangePassword, User> {
 
         private readonly ApplicationContext context;
 
-        public GetUserQueryHandler(ApplicationContext db_context) {
+        public ChangePasswordHandler(ApplicationContext db_context) {
             this.context = db_context;
         }
 

@@ -14,7 +14,7 @@ namespace StoreBackendClean.Application.UserModule.Query {
         
         public uint id {get; init;}
 
-        public GetUser(uint id){
+        public GetUserQuery(uint id){
             this.id = id;
         }
 
@@ -28,7 +28,7 @@ namespace StoreBackendClean.Application.UserModule.Query {
             context = db_context;
         }
 
-        public async Task<User> Handle(GetUser request, CancellationToken cancellationToken) {
+        public async Task<User> Handle(GetUserQuery request, CancellationToken cancellationToken) {
 
             var result = await context.Users.FindAsync(request.id);
             

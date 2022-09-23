@@ -12,11 +12,11 @@ namespace StoreBackendClean.Application.UserModule.command
 {
     public class ChangeUser : IRequest<User> {
         
-        uint Id {get; init;}
-        string Name {get; init;}
-        string Email {get; init;}
-        string Password {get; init;}
-        byte Role {get; init;}
+        public uint Id {get; init;}
+        public string Name {get; init;}
+        public string Email {get; init;}
+        public string Password {get; init;}
+        public byte Role {get; init;}
 
         public ChangeUser(User user_change){
             this.Id = user_change.Id;
@@ -27,11 +27,11 @@ namespace StoreBackendClean.Application.UserModule.command
         }
     }
 
-    public class GetUserQueryHandler : IRequestHandler<ChangeUser, User>{
+    public class ChangeUserHandler : IRequestHandler<ChangeUser, User>{
 
         private readonly ApplicationContext context;
 
-        public GetUserQueryHandler(ApplicationContext db_context){
+        public ChangeUserHandler(ApplicationContext db_context){
             this.context = db_context;
         }
 
@@ -51,7 +51,7 @@ namespace StoreBackendClean.Application.UserModule.command
                 user.Password = BCrypt.Net.BCrypt.HashPassword(request.Password);
             }
 
-            if(new_user.Email != null){
+            if(request.Email != null){
                 user.Email = request.Email;
             }
 

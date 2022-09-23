@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using MediatR;
 
 namespace StoreBackendClean.Controllers {
 
@@ -12,7 +13,7 @@ namespace StoreBackendClean.Controllers {
 
         private ISender _mediator = null!;
 
-        protected ISender Mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
+        protected ISender mediator => _mediator ??= HttpContext.RequestServices.GetRequiredService<ISender>();
 
     }
 }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 
 using StoreBackendClean.Domain.Entity;
-using StoreBackendClean.Doamin.common;
+using StoreBackendClean.Domain.common;
 
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -26,10 +26,10 @@ namespace StoreBackendClean.Infrastructure.Identity
 
             var token_descriptor = new SecurityTokenDescriptor {
                 Subject = new ClaimsIdentity(new Claim[]{
-                        new Claim("Id", found_user.Id.ToString()),
-                        new Claim("Name", found_user.Name),
-                        new Claim("Email", found_user.Email),
-                        new Claim("Role", found_user.Role.ToString())
+                        new Claim("Id", user.Id.ToString()),
+                        new Claim("Name", user.Name),
+                        new Claim("Email", user.Email),
+                        new Claim("Role", user.Role.ToString())
                     }),
 
                 Expires = DateTime.Now.AddSeconds(3600),
@@ -40,16 +40,9 @@ namespace StoreBackendClean.Infrastructure.Identity
             };
 
             var token_handler = new JwtSecurityTokenHandler();
-            var token = token_handler.WriteToken(token_handler.CreateToken(token_descriptor));
+            user.Token = token_handler.WriteToken(token_handler.CreateToken(token_descriptor));
 
-            UserAuthentication user_return = new UserAuthentication();
-            user_return.Id = found_user.Id;
-            user_return.Name = found_user.Name;
-            user_return.Email = found_user.Email;
-            user_return.Role = found_user.Role;
-            user_return.Token = token;
-
-            return user_return;
+            return user;
 
         }
     }

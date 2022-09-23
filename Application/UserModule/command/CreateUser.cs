@@ -12,10 +12,10 @@ namespace StoreBackendClean.Application.UserModule.command
 {
     public class CreateUser : IRequest<User> {
 
-        string Name {get; init;}
-        string Email {get; init;}
-        string Password {get; init;}
-        byte Role {get; init;}
+        public string Name {get; init;}
+        public string Email {get; init;}
+        public string Password {get; init;}
+        public byte Role {get; init;}
 
         public CreateUser(string name, string email, byte role, string password){
             
@@ -28,15 +28,15 @@ namespace StoreBackendClean.Application.UserModule.command
 
     }
 
-    public class GetUserQueryHandler : IRequestHandler<CreateUser, User>{
+    public class CreateUserHandler : IRequestHandler<CreateUser, User>{
 
         private readonly ApplicationContext context;
 
-        public GetUserQueryHandler(ApplicationContext db_context){
+        public CreateUserHandler(ApplicationContext db_context){
             this.context = db_context;
         }
 
-        public async Task<User> Handle(GetUsersQuery request, CancellationToken cancellationToken){
+        public async Task<User> Handle(CreateUser request, CancellationToken cancellationToken){
             
             User new_user = new User();
             new_user.Name = request.Name;

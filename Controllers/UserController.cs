@@ -65,7 +65,7 @@ namespace StoreBackendClean.Controllers {
                 
                 return Ok(mediator.Send(new ChangeUser(new_user)));
 
-            } catch(Exceptio ex) {
+            } catch(Exception ex) {
                 return NotFound(ex.Message);
             }
 
@@ -76,7 +76,7 @@ namespace StoreBackendClean.Controllers {
             
             try{
                 return Ok(mediator.Send(new ChangePassword(uint.Parse(User?.FindFirstValue("Id")), current_password, new_password, confirm_password)));
-            } catch(Exceptio ex) {
+            } catch(Exception ex) {
                 return NotFound(ex.Message);
             }
 

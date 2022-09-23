@@ -5,6 +5,11 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Mvc;
 using StoreBackendClean.Domain.Entity;
+using StoreBackendClean.Application.StoreModule.command;
+using StoreBackendClean.Application.StoreModule.Query;
+using StoreBackendClean.Application.StoreItemModule.command;
+using StoreBackendClean.Application.StoreItemModule.Query;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StoreBackendClean.Controllers
 {
@@ -16,54 +21,65 @@ namespace StoreBackendClean.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Store>>> getAllStores() {
 
-            StoreService service = new StoreService(context);
-            return Ok(await service.getAll());
+            try{
+                return Ok(await mediator.Send(new GetAllStoresQuery()));
+            }catch(Exception ex){
+                return NotFound(ex.Message);
+            }
 
         }
 
         [HttpGet("items/{store_id}")]
         public async Task<ActionResult<IEnumerable<StoreItem>>> getAllStoreItems(uint store_id) {
 
-            StoreService service = new StoreService(context);
-            return Ok(await service.getAllItems(store_id));
-            // return Ok(await context.StoreItems.Include(s => s.Store).Where(s => s.Store.Id == store_id).ToListAsync());
+            try{
+                return Ok(await mediator.Send(new GetStoreItemsQuery(store_id)));
+            }catch(Exception ex){
+                return NotFound(ex.Message);
+            }
 
         }
 
         [HttpGet("{store_id}")]
         public async Task<ActionResult<Store>> getStore(uint store_id){
 
-            StoreService service = new StoreService(context);
-            return Ok(await service.getStoreById(store_id));
+            try{
+                return Ok(await mediator.Send(new GetStoreQuery(store_id)));
+            }catch(Exception ex){
+                return NotFound(ex.Message);
+            }
 
         }
 
         [HttpGet("items/single_item/{id}")]
         public async Task<ActionResult<IEnumerable<StoreItem>>> getStoreItem(uint id) {
 
-            StoreItemService service = new StoreItemService(context);
-            return Ok(service.storeItem(id));
+            try{
+                return Ok(await mediator.Send(new GetStoreItemQuery(id)));
+            }catch(Exception ex){
+                return NotFound(ex.Message);
+            }
 
         }
 
         [HttpPost]
         public async Task<ActionResult<Store>> addStore([FromForm] string store_name, [FromForm] uint store_keeper) {
 
-            StoreService service = new StoreService(context);
-            return Ok(await service.addStore(store_name, store_keeper));                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
+            try{
+                return Ok(await mediator.Send(new CreateStore(store_name, store_keeper)));
+            }catch(Exception ex){
+                return NotFound(ex.Message);
+            }                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                
 
         }
 
         [HttpPost("items")]
         public async Task<ActionResult<StoreItem>> createStoreItem([FromForm] uint store_id, [FromForm] uint item_id, [FromForm] uint amount) {
 
-            StoreItemService service = new StoreItemService(context);
-            var store_item = await service.createItem(store_id, item_id, amount);
-
-            if(store_item != null){
-                return NotFound("operation failed!");
-            }else{
-                return store_item;
+            try{
+                return Ok(await mediator.Send(new CreateStoreItem(store_id, item_id, amount)));
+            }catch(Exception ex){
+                return NotFound(ex.Message);
             }
 
         }
@@ -71,13 +87,11 @@ namespace StoreBackendClean.Controllers
         [HttpPut]
         public async Task<ActionResult<Store>> editStore([FromForm] uint store_id, [FromForm] string store_name, [FromForm] uint store_keeper) {
 
-            StoreService service = new StoreService(context);
-            Store store = new Store();
-            store.Id = store_id;
-            store.Name = store_name;
-            store.StoreKeeper = store_keeper;
-
-            return await service.changeStore(store);
+            try{
+                return Ok(await mediator.Send(new ChangeStore(store_id, store_name, store_keeper)));
+            }catch(Exception ex){
+                return NotFound(ex.Message);
+            }
 
         }
 
@@ -85,17 +99,13 @@ namespace StoreBackendClean.Controllers
         public async Task<ActionResult<StoreItem>> addStoreItemAmount([FromForm] uint store_id, [FromForm] uint item_id, [FromForm] int amount) {
 
             try{
-                StoreItemService service = new StoreItemService(context);
+                
                 StoreItem store_item;
                 
                 if(amount > 0){
-                    store_item = await service.addItem(store_id, item_id, Convert.ToUInt32(amount));
+                    store_item = await mediator.Send(new ChangeStoreItemQuantity(store_id, item_id, Convert.ToUInt32(amount), true));
                 }else{
-                    store_item = await service.minimizeItem(store_id, item_id, Convert.ToUInt32(Math.Abs(amount)));
-                }
-
-                if(store_item == null){
-                    return NotFound("operation failed!");
+                    store_item = await mediator.Send(new ChangeStoreItemQuantity(store_id, item_id, Convert.ToUInt32(Math.Abs(amount)), false));
                 }
 
                 return Ok(store_item);
