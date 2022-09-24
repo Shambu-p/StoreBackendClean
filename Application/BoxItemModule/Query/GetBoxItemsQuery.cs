@@ -28,7 +28,7 @@ namespace StoreBackendClean.Application.BoxItemModule.Query
         }
 
         public async Task<IEnumerable<BoxItem>> Handle(GetBoxItemsQuery request, CancellationToken cancellationToken) {
-            return await context.BoxItems.Where((b => b.BoxId == request.BoxId)).ToListAsync();
+            return await context.BoxItems.Include(bs => bs.Item).Where((b => b.BoxId == request.BoxId)).ToListAsync();
         }
 
     }

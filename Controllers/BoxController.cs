@@ -9,11 +9,15 @@ using StoreBackendClean.Application.BoxModule.command;
 using StoreBackendClean.Application.BoxModule.Query;
 using StoreBackendClean.Application.BoxItemModule.Query;
 using StoreBackendClean.Application.BoxItemModule.command;
+using Microsoft.AspNetCore.Authorization;
+using System.Text;
+using System.Security.Claims;
 
 namespace StoreBackendClean.Controllers {
 
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class BoxController : ApiController {
 
         [HttpGet("{id}")]
@@ -28,10 +32,10 @@ namespace StoreBackendClean.Controllers {
         }
 
         [HttpPost]
-        public async Task<ActionResult<Box>> saveBox(uint store_id, uint user_id){
+        public async Task<ActionResult<Box>> saveBox([FromForm] uint store_id){
 
             try{
-                return Ok(await mediator.Send(new CreateBox(store_id, user_id)));
+                return Ok(await mediator.Send(new CreateBox(store_id, uint.Parse(User?.FindFirstValue("Id")))));
             }catch(Exception ex){
                 return NotFound(ex.Message);
             }
@@ -61,7 +65,7 @@ namespace StoreBackendClean.Controllers {
         }
 
         [HttpPost("items")]
-        public async Task<ActionResult<BoxItem>> createBoxItem(uint box_id, uint item_id, int amount) {
+        public async Task<ActionResult<BoxItem>> createBoxItem([FromForm] uint box_id, [FromForm] uint item_id, [FromForm] int amount) {
 
             try{
                 return Ok(await mediator.Send(new CreateBoxItem(box_id, item_id, amount)));
@@ -72,19 +76,19 @@ namespace StoreBackendClean.Controllers {
         }
 
         [HttpPut("items/change_quantity")]
-        public async Task<ActionResult<BoxItem>> addBoxItem(uint box_id, uint item_id, int amount) {
+        public async Task<ActionResult<BoxItem>> addBoxItem([FromForm] uint box_id,[FromForm] uint item_id,[FromForm] int amount) {
 
             try{
                 
-                BoxItem box_item;
+                ChangeItemQuantity command;
                 
                 if(amount > 0){
-                    box_item = await mediator.Send(new ChangeItemQuantity(item_id, box_id, amount, true));
+                    command = new ChangeItemQuantity(item_id, box_id, amount, true);
                 } else{
-                    box_item = await mediator.Send(new ChangeItemQuantity(item_id, box_id, Math.Abs(amount), false));
+                    command = new ChangeItemQuantity(item_id, box_id, Math.Abs(amount), false);
                 }
 
-                return Ok(box_item);
+                return Ok(await mediator.Send(command));
 
             }catch(Exception ex){
                 return NotFound(ex.Message);

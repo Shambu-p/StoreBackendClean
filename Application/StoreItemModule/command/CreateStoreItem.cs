@@ -34,7 +34,7 @@ namespace StoreBackendClean.Application.StoreItemModule.command {
 
         public async Task<StoreItem> Handle(CreateStoreItem request, CancellationToken cancellationToken) {
         
-            Store store = await context.Stores.FindAsync(request.StoreId);
+            Store store = context.Stores.Include(s => s.StoreItems).Where(s => s.Id == request.StoreId).FirstOrDefault();
             
             Item item = await context.Items.FindAsync(request.ItemId);
 

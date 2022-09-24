@@ -9,11 +9,13 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using StoreBackendClean.Application.ItemsModule.command;
 using StoreBackendClean.Application.ItemsModule.Query;
+using Microsoft.AspNetCore.Authorization;
 
 namespace StoreBackendClean.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [Authorize]
     public class ItemController : ApiController {
 
         [HttpGet]

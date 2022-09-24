@@ -44,6 +44,7 @@ namespace StoreBackendClean.Application.BoxItemModule.command
             }
 
             StoreItem st = context.StoreItems
+                .Include(si => si.Item)
                 .Where(si => si.ItemId == request.ItemId && si.StoreId == bx.Store.Id)
                 .FirstOrDefault<StoreItem>();
             
@@ -60,6 +61,8 @@ namespace StoreBackendClean.Application.BoxItemModule.command
             st.UnboxedAmount -= Convert.ToUInt32(request.Amount);
             context.BoxItems.Add(bx_item);
             await context.SaveChangesAsync();
+
+            bx_item.Item = st.Item;
 
             return bx_item;
 

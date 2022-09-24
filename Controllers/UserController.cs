@@ -18,7 +18,7 @@ namespace StoreBackendClean.Controllers {
 
     [ApiController]
     [Route("api/[controller]")]
-    // [Authorize]
+    [Authorize]
     public class UserController : ApiController {
 
         [HttpGet]

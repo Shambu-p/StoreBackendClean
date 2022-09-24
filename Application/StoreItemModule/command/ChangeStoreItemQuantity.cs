@@ -51,8 +51,8 @@ namespace StoreBackendClean.Application.StoreItemModule.command
                     throw new Exception("trying to export more number of Items than there is available number inside store");
                 }
 
-                store_item.TotalAmount = store_item.TotalAmount + request.Amount;
-                store_item.UnboxedAmount = store_item.UnboxedAmount + request.Amount;
+                store_item.TotalAmount = store_item.TotalAmount - request.Amount;
+                store_item.UnboxedAmount = store_item.UnboxedAmount - request.Amount;
 
             }
 
